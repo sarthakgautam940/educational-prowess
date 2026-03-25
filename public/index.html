@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Glass Chat</title>
+  <title>Chat</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
@@ -20,6 +20,10 @@
         <p class="eyebrow">Rooms</p>
         <h1>Pick a room</h1>
         <p class="subtle">Everyone uses the same link — messages sync in real time.</p>
+        <p class="domain-hint subtle small">
+          If your network blocks <code class="mono-inline">*.vercel.app</code>, add a custom domain in
+          Vercel → Project → Settings → Domains (free on Hobby; you use a name you control).
+        </p>
         <div id="chatroomsList" class="room-grid"></div>
         <p id="roomsLoadError" class="error-text" role="status"></p>
       </section>
