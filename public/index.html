@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Glass Chat</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header class="top-bar">
+    <span id="adminText" class="admin-link" role="button" tabindex="0">admin</span>
+  </header>
+
+  <main id="chatroomsScreen" class="screen active" aria-label="Chat rooms">
+    <div class="shell">
+      <section class="glass card">
+        <p class="eyebrow">Rooms</p>
+        <h1>Pick a room</h1>
+        <p class="subtle">Everyone uses the same link — messages sync in real time.</p>
+        <div id="chatroomsList" class="room-grid"></div>
+        <p id="roomsLoadError" class="error-text" role="status"></p>
+      </section>
+    </div>
+  </main>
+
+  <main id="joinScreen" class="screen" aria-label="Join room">
+    <div class="shell">
+      <section class="glass card">
+        <p class="eyebrow">Join</p>
+        <h2 id="roomName" class="room-title"></h2>
+        <label class="field">
+          <span class="field-label">Room code</span>
+          <input type="password" id="passwordInput" autocomplete="off" placeholder="Enter the room code">
+        </label>
+        <label class="field">
+          <span class="field-label">Your name</span>
+          <input type="text" id="usernameInput" autocomplete="nickname" maxlength="32" placeholder="How should we call you?">
+        </label>
+        <div class="actions">
+          <button type="button" class="btn primary" id="joinBtn">Enter</button>
+          <button type="button" class="btn ghost" id="joinBackBtn">Back</button>
+        </div>
+        <p id="joinError" class="error-text" role="status"></p>
+      </section>
+    </div>
+  </main>
+
+  <main id="chatScreen" class="screen" aria-label="Chat">
+    <div class="chat-shell glass">
+      <header class="chat-top">
+        <div class="chat-top-main">
+          <p class="eyebrow dim">Room</p>
+          <h2 id="currentRoomName" class="chat-title"></h2>
+          <p id="membersList" class="members-line" aria-live="polite"></p>
+        </div>
+        <button type="button" class="icon-btn" id="leaveBtn" aria-label="Leave room">×</button>
+      </header>
+      <div id="messagesContainer" class="messages" role="log" aria-relevant="additions"></div>
+      <footer class="composer">
+        <label class="sr-only" for="messageInput">Message</label>
+        <input type="text" id="messageInput" maxlength="2000" placeholder="Message..." autocomplete="off">
+        <button type="button" class="btn send" id="sendBtn">Send</button>
+      </footer>
+      <p id="chatSessionError" class="error-text center" role="status"></p>
+    </div>
+  </main>
+
+  <div id="adminModal" class="modal" aria-hidden="true">
+    <div class="modal-backdrop" data-close="1"></div>
+    <div class="modal-panel glass" role="dialog" aria-modal="true" aria-labelledby="adminHeading">
+      <header class="modal-head">
+        <h2 id="adminHeading">Admin</h2>
+        <button type="button" class="icon-btn" id="adminCloseBtn" aria-label="Close">×</button>
+      </header>
+
+      <div id="adminLogin" class="modal-body">
+        <label class="field">
+          <span class="field-label">Admin code</span>
+          <input type="password" id="adminCode" autocomplete="off" placeholder="Enter admin code">
+        </label>
+        <button type="button" class="btn primary full" id="adminLoginBtn">Unlock</button>
+        <p id="adminLoginError" class="error-text" role="status"></p>
+      </div>
+
+      <div id="adminPanel" class="modal-body hidden">
+        <nav class="tabs" role="tablist">
+          <button type="button" class="tab active" data-tab="create" role="tab" aria-selected="true">Create</button>
+          <button type="button" class="tab" data-tab="manage" role="tab" aria-selected="false">Manage</button>
+          <button type="button" class="tab" data-tab="adminjoin" role="tab" aria-selected="false">Join</button>
+        </nav>
+
+        <section id="tabCreate" class="tab-pane active" role="tabpanel">
+          <label class="field">
+            <span class="field-label">Room name</span>
+            <input type="text" id="newRoomName" maxlength="64" placeholder="e.g. Spanish">
+          </label>
+          <label class="field">
+            <span class="field-label">Room code</span>
+            <input type="password" id="newRoomPassword" placeholder="Guests use this to enter">
+          </label>
+          <button type="button" class="btn primary full" id="createRoomBtn">Create room</button>
+          <p id="createStatus" class="status-text" role="status"></p>
+        </section>
+
+        <section id="tabManage" class="tab-pane" role="tabpanel">
+          <p class="subtle small">Rename, change code, remove rooms, or kick active members.</p>
+          <div id="manageRoomsList" class="manage-list"></div>
+          <p id="manageStatus" class="status-text" role="status"></p>
+        </section>
+
+        <section id="tabAdminjoin" class="tab-pane" role="tabpanel">
+          <label class="field">
+            <span class="field-label">Room</span>
+            <input type="text" id="adminJoinRoom" list="adminRoomOptions" placeholder="Room name">
+            <datalist id="adminRoomOptions"></datalist>
+          </label>
+          <label class="field">
+            <span class="field-label">Room code</span>
+            <input type="password" id="adminJoinPassword" placeholder="Same code guests use">
+          </label>
+          <label class="field">
+            <span class="field-label">Your name in chat</span>
+            <input type="text" id="adminJoinName" maxlength="32" placeholder="Optional — defaults to Admin">
+          </label>
+          <button type="button" class="btn primary full" id="adminJoinBtn">Join as member</button>
+          <p id="adminJoinStatus" class="status-text" role="status"></p>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <script src="/client.js"></script>
+</body>
+</html>

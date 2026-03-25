@@ -1,0 +1,19 @@
+{
+  "name": "simple-web-chat",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Simple real-time-ish chat for Vercel (HTTP polling + shared Redis)",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "@upstash/redis": "^1.34.3",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "uuid": "^11.0.3"
+  },
+  "engines": {
+    "node": ">=18.x"
+  }
+}
