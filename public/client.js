@@ -39,7 +39,7 @@
       return {
         ok: false,
         error: isHtml
-          ? 'API returned a web page instead of data. If you are on Vercel, remove custom rewrites to /server.js and redeploy so Express can own /api/*.'
+          ? 'Server returned HTML instead of the chat API. Redeploy the latest branch (uses /api + vercel.json rewrites) or check Vercel project settings.'
           : `Invalid response (${flat || 'not JSON'})`,
       };
     }

@@ -2,10 +2,10 @@
   "name": "simple-web-chat",
   "version": "1.0.0",
   "private": true,
-  "description": "Simple real-time-ish chat for Vercel (HTTP polling + shared Redis)",
+  "description": "Simple chat for Vercel (Express in /api + polling). Add Vercel KV for shared storage (env KV_REST_API_*).",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js"
+    "start": "node dev.js",
+    "dev": "node dev.js"
   },
   "dependencies": {
     "@upstash/redis": "^1.34.3",
