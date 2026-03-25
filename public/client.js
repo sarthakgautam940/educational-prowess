@@ -28,18 +28,30 @@
     return d.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
   }
 
+  async function readJsonBody(res) {
+    const text = await res.text();
+    if (!text) return null;
+    try {
+      return JSON.parse(text);
+    } catch {
+      const flat = text.replace(/\s+/g, ' ').trim().slice(0, 120);
+      const isHtml = /^<!DOCTYPE/i.test(text.trim()) || /^<html/i.test(text.trim());
+      return {
+        ok: false,
+        error: isHtml
+          ? 'API returned a web page instead of data. If you are on Vercel, remove custom rewrites to /server.js and redeploy so Express can own /api/*.'
+          : `Invalid response (${flat || 'not JSON'})`,
+      };
+    }
+  }
+
   async function api(path, body) {
     const res = await fetch(path, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body ?? {}),
     });
-    let data = null;
-    try {
-      data = await res.json();
-    } catch {
-      data = null;
-    }
+    const data = await readJsonBody(res);
     return { res, data };
   }
 
@@ -63,8 +75,10 @@
     $('roomsLoadError').textContent = '';
     try {
       const res = await fetch('/api/chatrooms');
-      const data = await res.json();
-      if (!data.ok) throw new Error(data.error || 'Failed to load');
+      const data = await readJsonBody(res);
+      if (!data || !data.ok) {
+        throw new Error((data && data.error) || 'Failed to load');
+      }
       renderRooms(data.rooms || []);
       syncAdminRoomOptions(data.rooms || []);
     } catch (e) {
@@ -320,9 +334,12 @@
     const wrap = $('manageRoomsList');
     wrap.innerHTML = '<p class="subtle small">Loading…</p>';
     const res = await fetch('/api/chatrooms');
-    const data = await res.json();
-    if (!data.ok) {
-      wrap.innerHTML = '<p class="error-text">Could not load rooms</p>';
+    const data = await readJsonBody(res);
+    if (!data || !data.ok) {
+      wrap.innerHTML =
+        '<p class="error-text">' +
+        escapeHtml((data && data.error) || 'Could not load rooms') +
+        '</p>';
       return;
     }
     const rooms = data.rooms || [];
